@@ -1,0 +1,9 @@
+{
+  "name": "1337_IRC_CHAT",
+  "version": "0.0.1",
+  "description": "Only 4 the elite",
+  "dependencies": {
+    "express": "^4.10.2",
+    "socket.io": "^1.4.8"
+  }
+}

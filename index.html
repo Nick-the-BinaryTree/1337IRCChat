@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <title>1337 IRC Chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; color: #20C20E }
+      body { font: 13px Helvetica, Arial; background: #000; }
+      form { background: #20C20E; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { background: #000; border: 0; padding: 10px; width: 100%; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #2e2e2e; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" />
+    </form>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+	<script>
+  		var socket = io();
+        var msgCount = 0;
+        
+		$('form').submit(function(){
+			socket.emit('chat message', $('#m').val());
+			$('#m').val('');
+			return false;
+		});
+		socket.on('chat message', function(msgPack){
+			$('#messages').append($('<li>').text(msgPack.name + ": " + msgPack.msg));
+            msgCount++;
+            checkCount();
+		});
+        socket.on('list message', function(listArray){
+            for(var x = 0; x < listArray.length; x++){
+                $('#messages').append($('<li>').text(listArray[x]));
+                msgCount++;
+                checkCount();
+            }
+        });
+        socket.on('clear message', function(){
+			$('#messages').empty();
+		});
+        
+        function checkCount(){
+            if(msgCount > 20){
+                $('#messages li').eq(0).remove();
+            }   
+        }
+	</script>	
+  </body>
+</html>
