@@ -1,18 +1,18 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var users = [];
-var stockNames = ["Neo", "Chad", "Charmander", "Squirtle", "Bulbasaur", "The Chosen One", "Rex", "1337", "LeetLarry", "Splicer", "Ghost", "Sandwich", "Iceman", "Zombie", "Bane", "Death gun", "Shadow", "Toxic", "Mr. Green", "Zero", "Kingpin", "Plague", "Donald Trump"];
+var stockNames = ["Neo", "Chad", "Charmander", "Squirtle", "Bulbasaur", "The Chosen One", "Rex", "1337", "LeetLarry", "Splicer", "Ghost", "Sandwich", "Iceman", "Zombie", "Bane", "Death Star", "Shadow", "Toxic", "Mr. Green", "Zero", "Kingpin", "Plague", "Donald Trump"];
+var bit_history = [];
 
-app.get('/', function(req, res){
-	res.sendFile(__dirname + '/index.html');
-});
+app.use(express.static(__dirname+'/public'));
 
 http.listen(3000, function(){
 	console.log('listening on *:3000');
 });
 
-io.on('connection', function(socket){
+io.on('connection', function(socket){ //First connection and disconnect
         var name = userGen();
         users.push({"id" : socket.id, "name" : name, "hex" : false});
         console.log('Connected: ' + socket.id + " | " + name);
@@ -21,6 +21,10 @@ io.on('connection', function(socket){
                 console.log('Disconnected: ' + socket.id + " | " + name);
                 users.splice(userIndex, 1);
         });
+        
+        for (var i in bit_history){
+            socket.emit('draw_bit', bit_history[i]);
+        }
 });
 
 io.on('connection', function(socket){
@@ -30,6 +34,18 @@ io.on('connection', function(socket){
 		console.log(name + ': ' + msg);
         parseMsg(socket.id, name, msg);
 	});
+    
+    socket.on('draw_bit', function(bit){
+        bit_history.push(bit);
+        io.emit('draw_bit', bit);
+    });
+    
+    socket.on('clearD', function(){
+        console.log("clearing drawings");
+        //line_history = [];
+        bit_history = [];
+        io.emit('clearD');
+    });
 });
 
 function userSearch(tar, type){
@@ -40,7 +56,7 @@ function userSearch(tar, type){
     }
     return -1;
 }
-
+    
 function userGen(){
     
     var rand = Math.random() * 2;
@@ -124,4 +140,3 @@ function hex(msg){
     return hexed;
 }
 
-//TODO: Add /clear to client only and delete upper messages
