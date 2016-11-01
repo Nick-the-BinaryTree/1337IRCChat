@@ -71,11 +71,10 @@ document.addEventListener("DOMContentLoaded", function(){
         checkCount();
     });
     socket.on('list message', function(listArray){
-        for(var x = 0; x < listArray.length; x++){
-            $('#messages').append($('<li>').text(listArray[x]));
-            msgCount++;
-            checkCount();
-        }
+        printArray(listArray);
+    });
+    socket.on('help message', function(listArray){
+        printArray(listArray);
     });
     socket.on('clear message', function(){
         $('#messages').empty();
@@ -85,6 +84,14 @@ document.addEventListener("DOMContentLoaded", function(){
         if(msgCount > 20){
             $('#messages li').eq(0).remove();
         }   
+    }
+    
+    function printArray(listArray){
+        for(var x = 0; x < listArray.length; x++){
+            $('#messages').append($('<li>').text(listArray[x]));
+            msgCount++;
+            checkCount();
+        }
     }
     
     function changeMode(){

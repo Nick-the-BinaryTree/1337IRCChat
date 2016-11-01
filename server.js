@@ -4,6 +4,14 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var users = [];
 var stockNames = ["Neo", "Chad", "Charmander", "Squirtle", "Bulbasaur", "The Chosen One", "Rex", "1337", "LeetLarry", "Splicer", "Ghost", "Sandwich", "Iceman", "Zombie", "Bane", "Death Star", "Shadow", "Toxic", "Mr. Green", "Zero", "Kingpin", "Plague", "Donald Trump"];
+var help = [
+    "/clear -> clears chat",
+    "/help -> brings you here",
+    "/hex [username] -> converts a user's output to hexidecimal",
+    "/list -> lists users online",
+    "/name [new_name] -> changes your nickname to a new value",
+    "\\ -> (forward slash) switches to a drawing canvas and back (space clears canvas)"
+];
 var bit_history = [];
 
 app.use(express.static(__dirname+'/public'));
@@ -81,12 +89,14 @@ function userGen(){
 function parseMsg(id, name, msg){
     
     var words = msg.split(' ');
-    
     if(words[0] !== 'undefined'){
         if(words[0] === "/name"){
             if(typeof words[1] !== 'undefined'){
                 setName(id, words[1]);
             }
+        }
+        else if(words[0] === "/help"){
+            io.sockets.connected[id].emit('help message', help);
         }
         else if(words[0] === "/hex"){
             if(typeof words[1] !== 'undefined'){
