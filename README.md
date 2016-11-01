@@ -6,6 +6,7 @@ Forward slash switches to between chat and canvas.
 
 Type "/help" for more commands.
 
+==============================================================================================
 
 Based on:
 
