@@ -1,7 +1,9 @@
 # 1337IRCChat
 
 Node.js chat room and collaborative drawing tool.
+
 Forward slash switches to between chat and canvas.
+
 Type "/help" for more commands.
 
 Based on:
